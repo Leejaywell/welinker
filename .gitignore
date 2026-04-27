@@ -1,3 +1,5 @@
 /target/
-/.DS_Store
+.DS_Store
 *.log
+web/node_modules/
+web/dist/
