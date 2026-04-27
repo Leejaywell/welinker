@@ -704,7 +704,7 @@ textarea.message-control {
 }
 
 .chat-panel textarea.message-control {
-  min-height: 96px;
+  min-height: 72px;
 }
 
 .control::placeholder {
