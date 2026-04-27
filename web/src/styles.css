@@ -11,15 +11,131 @@
   --line: rgba(15, 118, 110, 0.16);
   --line-strong: rgba(15, 118, 110, 0.28);
   --primary: #0d9488;
+  --primary-rgb: 13, 148, 136;
   --primary-strong: #0f766e;
   --primary-soft: #ccfbf1;
   --accent: #f97316;
+  --accent-rgb: 249, 115, 22;
   --accent-soft: #ffedd5;
   --danger: #b42318;
   --ok: #16794c;
   --focus: #14b8a6;
+  --focus-rgb: 20, 184, 166;
+  --heading-rgb: 19, 78, 74;
+  --page-start: #f0fdfa;
+  --page-mid: #f8fffd;
+  --page-end: #fff7ed;
   --shadow: 0 24px 70px rgba(19, 78, 74, 0.12);
   --small-shadow: 0 12px 28px rgba(19, 78, 74, 0.09);
+}
+
+:root[data-theme="lotus"] {
+  --bg: #fff1f2;
+  --bg-warm: #fdf2f8;
+  --surface-soft: #fff7ed;
+  --text: #5b2536;
+  --heading: #4a1728;
+  --muted: #7a5260;
+  --primary: #be6274;
+  --primary-rgb: 190, 98, 116;
+  --primary-strong: #9f445b;
+  --primary-soft: #ffe4e6;
+  --accent: #d97706;
+  --accent-rgb: 217, 119, 6;
+  --accent-soft: #fef3c7;
+  --focus: #f43f5e;
+  --focus-rgb: 244, 63, 94;
+  --heading-rgb: 74, 23, 40;
+  --page-start: #fff1f2;
+  --page-mid: #fff8f5;
+  --page-end: #fdf2f8;
+}
+
+:root[data-theme="ocean"] {
+  --bg: #eff6ff;
+  --bg-warm: #ecfeff;
+  --surface-soft: #e0f2fe;
+  --text: #164e63;
+  --heading: #0c3b55;
+  --muted: #4f6f80;
+  --primary: #0284c7;
+  --primary-rgb: 2, 132, 199;
+  --primary-strong: #0369a1;
+  --primary-soft: #dbeafe;
+  --accent: #0d9488;
+  --accent-rgb: 13, 148, 136;
+  --accent-soft: #ccfbf1;
+  --focus: #38bdf8;
+  --focus-rgb: 56, 189, 248;
+  --heading-rgb: 12, 59, 85;
+  --page-start: #eff6ff;
+  --page-mid: #f8fbff;
+  --page-end: #ecfeff;
+}
+
+:root[data-theme="amber"] {
+  --bg: #fffbeb;
+  --bg-warm: #fff7ed;
+  --surface-soft: #fef3c7;
+  --text: #5f3b12;
+  --heading: #43240a;
+  --muted: #7c5d32;
+  --primary: #b45309;
+  --primary-rgb: 180, 83, 9;
+  --primary-strong: #92400e;
+  --primary-soft: #fde68a;
+  --accent: #0d9488;
+  --accent-rgb: 13, 148, 136;
+  --accent-soft: #ccfbf1;
+  --focus: #f59e0b;
+  --focus-rgb: 245, 158, 11;
+  --heading-rgb: 67, 36, 10;
+  --page-start: #fffbeb;
+  --page-mid: #fffdf5;
+  --page-end: #fff7ed;
+}
+
+:root[data-theme="berry"] {
+  --bg: #faf5ff;
+  --bg-warm: #fff1f2;
+  --surface-soft: #f3e8ff;
+  --text: #4c1d5e;
+  --heading: #3b124d;
+  --muted: #6f4b7e;
+  --primary: #9333ea;
+  --primary-rgb: 147, 51, 234;
+  --primary-strong: #7e22ce;
+  --primary-soft: #f3e8ff;
+  --accent: #db2777;
+  --accent-rgb: 219, 39, 119;
+  --accent-soft: #fce7f3;
+  --focus: #a855f7;
+  --focus-rgb: 168, 85, 247;
+  --heading-rgb: 59, 18, 77;
+  --page-start: #faf5ff;
+  --page-mid: #fdfaff;
+  --page-end: #fff1f2;
+}
+
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #071716;
+  --bg-warm: #1f130a;
+  --surface: rgba(11, 30, 29, 0.86);
+  --surface-solid: #0c1f1e;
+  --surface-soft: #102a28;
+  --text: #d8f3ef;
+  --heading: #f2fffc;
+  --muted: #9ec5bf;
+  --line: rgba(var(--primary-rgb), 0.26);
+  --line-strong: rgba(var(--primary-rgb), 0.42);
+  --primary-soft: rgba(var(--primary-rgb), 0.22);
+  --accent-soft: rgba(var(--accent-rgb), 0.18);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
+  --small-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+  --page-start: #061413;
+  --page-mid: #0b1f1e;
+  --page-end: #1a120a;
 }
 
 * {
@@ -31,9 +147,9 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    radial-gradient(circle at 12% 8%, rgba(249, 115, 22, 0.16), transparent 28%),
-    radial-gradient(circle at 88% 2%, rgba(20, 184, 166, 0.18), transparent 26%),
-    linear-gradient(135deg, #f0fdfa 0%, #f8fffd 46%, #fff7ed 100%);
+    radial-gradient(circle at 12% 8%, rgba(var(--accent-rgb), 0.16), transparent 28%),
+    radial-gradient(circle at 88% 2%, rgba(var(--focus-rgb), 0.18), transparent 26%),
+    linear-gradient(135deg, var(--page-start) 0%, var(--page-mid) 46%, var(--page-end) 100%);
   font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   overflow-x: hidden;
 }
@@ -43,7 +159,7 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: linear-gradient(rgba(19, 78, 74, 0.045) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(var(--heading-rgb), 0.045) 1px, transparent 1px);
   background-size: 100% 44px;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent 65%);
 }
@@ -172,6 +288,64 @@ h2 {
   color: #9a4b0f;
   background: rgba(255, 237, 213, 0.8);
   border-color: rgba(249, 115, 22, 0.22);
+}
+
+.select-pill,
+.segmented-control,
+.mode-toggle {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(var(--primary-rgb), 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--heading);
+  padding: 6px 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.select-pill select {
+  max-width: 92px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 800;
+  outline: none;
+  cursor: pointer;
+}
+
+.segmented-control {
+  padding: 4px;
+}
+
+.segmented-control svg {
+  margin-left: 6px;
+}
+
+.segmented-control button {
+  min-width: 36px;
+  min-height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.segmented-control button[aria-pressed="true"] {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.mode-toggle {
+  border-color: rgba(var(--accent-rgb), 0.22);
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--heading);
 }
 
 .dot {
@@ -726,6 +900,73 @@ button:focus-visible {
   font-size: 13px;
   font-weight: 800;
   overflow-wrap: anywhere;
+}
+
+:root[data-mode="dark"] .topbar-inner,
+:root[data-mode="dark"] .view-tabs,
+:root[data-mode="dark"] .panel,
+:root[data-mode="dark"] .workspace-hero,
+:root[data-mode="dark"] .hero-stats > div,
+:root[data-mode="dark"] .account-card,
+:root[data-mode="dark"] .activity-item,
+:root[data-mode="dark"] .chat-bubble,
+:root[data-mode="dark"] .agent-row,
+:root[data-mode="dark"] .select-pill,
+:root[data-mode="dark"] .segmented-control,
+:root[data-mode="dark"] .mode-toggle,
+:root[data-mode="dark"] .status-pill,
+:root[data-mode="dark"] .metric {
+  border-color: rgba(var(--primary-rgb), 0.26);
+  background: rgba(10, 26, 25, 0.78);
+}
+
+:root[data-mode="dark"] .panel.feature,
+:root[data-mode="dark"] .workspace-hero {
+  background:
+    linear-gradient(180deg, rgba(13, 29, 28, 0.92), rgba(9, 21, 20, 0.86)),
+    linear-gradient(135deg, rgba(var(--primary-rgb), 0.12), rgba(var(--accent-rgb), 0.11));
+}
+
+:root[data-mode="dark"] .control,
+:root[data-mode="dark"] .chat-log,
+:root[data-mode="dark"] .empty-state {
+  border-color: rgba(var(--primary-rgb), 0.28);
+  background: rgba(7, 19, 18, 0.72);
+  color: var(--text);
+  box-shadow: none;
+}
+
+:root[data-mode="dark"] .composer-meta,
+:root[data-mode="dark"] .chat-bubble.user,
+:root[data-mode="dark"] .mood-pill {
+  border-color: rgba(var(--accent-rgb), 0.32);
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--text);
+}
+
+:root[data-mode="dark"] .badge.neutral {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-mode="dark"] .badge.primary {
+  background: rgba(var(--primary-rgb), 0.22);
+  color: var(--heading);
+}
+
+:root[data-mode="dark"] .btn {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--heading);
+}
+
+:root[data-mode="dark"] .btn:hover,
+:root[data-mode="dark"] .account-card:hover,
+:root[data-mode="dark"] .control:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-mode="dark"] .select-pill select option {
+  background: var(--surface-solid);
+  color: var(--text);
 }
 
 @media (prefers-reduced-motion: reduce) {

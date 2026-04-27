@@ -6,14 +6,18 @@ import {
   Check,
   Clock,
   FileJson,
+  Languages,
   ListChecks,
   MessageCircle,
+  Moon,
+  Palette,
   Plus,
   RefreshCw,
   Sparkles,
   Save,
   Send,
   Settings,
+  Sun,
   Trash2,
   Users,
   X,
@@ -21,6 +25,237 @@ import {
 import './styles.css';
 
 const emptyConfigPath = '-';
+const UI_PREFS_KEY = 'welinker-ui-prefs';
+const themes = [
+  { id: 'calm', label: { en: 'Calm', zh: '静心' } },
+  { id: 'lotus', label: { en: 'Lotus', zh: '莲雾' } },
+  { id: 'ocean', label: { en: 'Ocean', zh: '海风' } },
+  { id: 'amber', label: { en: 'Amber', zh: '暖橙' } },
+  { id: 'berry', label: { en: 'Berry', zh: '莓果' } },
+];
+
+const copy = {
+  en: {
+    loading: 'Loading',
+    readyLocal: 'Ready for local chat',
+    offline: 'offline',
+    identity: 'identity',
+    identities: 'identities',
+    wechatIdentity: 'WeChat identity',
+    wechatIdentities: 'WeChat identities',
+    identitiesReady: (count) => `${count} WeChat ${count === 1 ? 'identity' : 'identities'} ready`,
+    identitiesAvailable: (count) => `${count} WeChat ${count === 1 ? 'identity' : 'identities'} available`,
+    noIdentity: 'No identity',
+    unknown: 'unknown',
+    userUnknown: 'user unknown',
+    defaultHome: 'default home',
+    brandSubtitle: 'a quiet desk for WeChat and your assistant',
+    calmMode: 'Calm mode',
+    language: 'Language',
+    theme: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    compose: 'Compose',
+    assistant: 'Assistant',
+    preferences: 'Preferences',
+    today: 'Today in Welinker',
+    heroTitle: 'Send with a lighter touch.',
+    heroCopy: 'Choose an identity, write the message, and keep your assistant close when you need a second pass.',
+    readyIdentities: 'Ready identities',
+    currentIdentity: 'Current identity',
+    pickIdentity: 'Pick where this message should come from',
+    refresh: 'Refresh',
+    identityEmpty: 'No WeChat identity is connected yet.',
+    composeMessage: 'Compose message',
+    composeDescription: 'Write once, then send through the selected identity',
+    from: 'From',
+    to: 'To',
+    required: 'Required',
+    contactHint: 'WeChat contact id',
+    message: 'Message',
+    characters: 'characters',
+    messagePlaceholder: 'Write something clear and kind.',
+    attachmentLink: 'Attachment link',
+    optional: 'Optional',
+    notSet: 'Not set',
+    none: 'None',
+    clear: 'Clear',
+    sendMessage: 'Send message',
+    inUse: 'In use',
+    available: 'Available',
+    draftCleared: 'Draft cleared',
+    draftClearedDetail: 'The message area is fresh again',
+    sending: 'Sending',
+    sent: 'Sent',
+    messageSent: 'Message sent',
+    preparedFor: (to) => `Prepared for ${to}`,
+    sendNeedsAttention: 'Send needs attention',
+    assistantTitle: 'Assistant',
+    assistantDescription: 'Draft, revise, and think beside the message',
+    assistantName: 'Assistant name',
+    thread: 'Thread',
+    keepsContext: 'Keeps context',
+    prompt: 'Prompt',
+    new: 'New',
+    send: 'Send',
+    promptHint: 'Use New to reset',
+    promptPlaceholder: 'Ask for a rewrite, a reply idea, or a quick summary.',
+    noChat: 'No local chat messages yet.',
+    messageRequired: 'Message is required',
+    ready: 'Ready',
+    assistantReplied: 'Assistant replied',
+    defaultAssistant: 'default assistant',
+    you: 'You',
+    assistantNeedsAttention: 'Assistant needs attention',
+    preferencesDescription: 'Tune the workspace when you need deeper control',
+    notLoaded: 'Not loaded',
+    edited: 'Edited',
+    loaded: 'Loaded',
+    saved: 'Saved',
+    saving: 'Saving',
+    savedRestart: 'Saved; restart when convenient',
+    advancedPreferences: 'Advanced preferences',
+    reload: 'Reload',
+    format: 'Format',
+    save: 'Save',
+    formatted: 'Formatted',
+    recentMoments: 'Recent moments',
+    recentDescription: 'What changed during this visit',
+    events: (count) => `${count} event${count === 1 ? '' : 's'}`,
+    nothingYet: 'Nothing has happened yet.',
+    atAGlance: 'At a glance',
+    summaryDescription: 'Current workspace settings',
+    savedAt: 'Saved at',
+    defaultAssistantLabel: 'Default assistant',
+    listeningOn: 'Listening on',
+    assistants: 'Assistants',
+    noAssistants: 'No assistants are configured.',
+    workspaceRefreshed: 'Workspace refreshed',
+    workspaceUnavailable: 'Workspace unavailable',
+    preferencesLoaded: 'Preferences loaded',
+    preferencesSaved: 'Preferences saved',
+    preferencesUnavailable: 'Preferences unavailable',
+    preferencesSaveFailed: 'Preferences save failed',
+    settingsFile: 'settings file',
+  },
+  zh: {
+    loading: '加载中',
+    readyLocal: '本地对话已就绪',
+    offline: '离线',
+    identity: '身份',
+    identities: '身份',
+    wechatIdentity: '微信身份',
+    wechatIdentities: '微信身份',
+    identitiesReady: (count) => `${count} 个微信身份可用`,
+    identitiesAvailable: (count) => `${count} 个微信身份可用`,
+    noIdentity: '未选择身份',
+    unknown: '未知',
+    userUnknown: '用户未知',
+    defaultHome: '默认入口',
+    brandSubtitle: '微信消息与助手的安静工作台',
+    calmMode: '静心模式',
+    language: '语言',
+    theme: '主题',
+    light: '亮色',
+    dark: '暗色',
+    compose: '撰写',
+    assistant: '助手',
+    preferences: '偏好',
+    today: '今日 Welinker',
+    heroTitle: '轻松写好每条消息。',
+    heroCopy: '选择微信身份，写下消息，需要时让助手在旁边帮你润色或整理思路。',
+    readyIdentities: '可用身份',
+    currentIdentity: '当前身份',
+    pickIdentity: '选择这条消息从哪里发出',
+    refresh: '刷新',
+    identityEmpty: '还没有连接微信身份。',
+    composeMessage: '撰写消息',
+    composeDescription: '写好一次，再通过选中的身份发送',
+    from: '发送身份',
+    to: '发送对象',
+    required: '必填',
+    contactHint: '微信联系人 ID',
+    message: '消息',
+    characters: '字符',
+    messagePlaceholder: '写一段清楚、自然的话。',
+    attachmentLink: '附件链接',
+    optional: '可选',
+    notSet: '未填写',
+    none: '无',
+    clear: '清空',
+    sendMessage: '发送消息',
+    inUse: '使用中',
+    available: '可用',
+    draftCleared: '草稿已清空',
+    draftClearedDetail: '消息区域已重置',
+    sending: '发送中',
+    sent: '已发送',
+    messageSent: '消息已发送',
+    preparedFor: (to) => `已准备发送给 ${to}`,
+    sendNeedsAttention: '发送需要处理',
+    assistantTitle: '助手',
+    assistantDescription: '在写消息时帮你起草、润色和整理',
+    assistantName: '助手名称',
+    thread: '会话',
+    keepsContext: '保留上下文',
+    prompt: '提问',
+    new: '新会话',
+    send: '发送',
+    promptHint: '点新会话可重置',
+    promptPlaceholder: '让助手帮你改写、想回复，或快速总结。',
+    noChat: '还没有本地对话。',
+    messageRequired: '请输入内容',
+    ready: '就绪',
+    assistantReplied: '助手已回复',
+    defaultAssistant: '默认助手',
+    you: '你',
+    assistantNeedsAttention: '助手需要处理',
+    preferencesDescription: '需要更细控制时，可以在这里调整工作台',
+    notLoaded: '未加载',
+    edited: '已编辑',
+    loaded: '已加载',
+    saved: '已保存',
+    saving: '保存中',
+    savedRestart: '已保存，方便时重启生效',
+    advancedPreferences: '高级偏好',
+    reload: '重新加载',
+    format: '格式化',
+    save: '保存',
+    formatted: '已格式化',
+    recentMoments: '最近动态',
+    recentDescription: '这次访问中发生的变化',
+    events: (count) => `${count} 条动态`,
+    nothingYet: '还没有动态。',
+    atAGlance: '一览',
+    summaryDescription: '当前工作台设置',
+    savedAt: '保存位置',
+    defaultAssistantLabel: '默认助手',
+    listeningOn: '监听地址',
+    assistants: '助手',
+    noAssistants: '还没有配置助手。',
+    workspaceRefreshed: '工作台已刷新',
+    workspaceUnavailable: '工作台不可用',
+    preferencesLoaded: '偏好已加载',
+    preferencesSaved: '偏好已保存',
+    preferencesUnavailable: '偏好不可用',
+    preferencesSaveFailed: '偏好保存失败',
+    settingsFile: '设置文件',
+  },
+};
+
+function readPrefs() {
+  try {
+    const raw = window.localStorage.getItem(UI_PREFS_KEY);
+    const prefs = raw ? JSON.parse(raw) : {};
+    return {
+      language: prefs.language === 'zh' ? 'zh' : 'en',
+      mode: prefs.mode === 'dark' ? 'dark' : 'light',
+      theme: themes.some((theme) => theme.id === prefs.theme) ? prefs.theme : 'calm',
+    };
+  } catch {
+    return { language: 'en', mode: 'light', theme: 'calm' };
+  }
+}
 
 function shortValue(value, fallback = 'None') {
   if (!value) return fallback;
@@ -55,8 +290,10 @@ function Field({ label, hint, htmlFor, children }) {
 }
 
 function App() {
+  const [uiPrefs, setUiPrefs] = useState(readPrefs);
+  const t = copy[uiPrefs.language];
   const [view, setView] = useState('message');
-  const [status, setStatus] = useState({ text: 'Loading', type: '' });
+  const [status, setStatus] = useState({ text: t.loading, type: '' });
   const [accounts, setAccounts] = useState([]);
   const [selected, setSelected] = useState('');
   const [activity, setActivity] = useState([]);
@@ -85,7 +322,11 @@ function App() {
     () => accounts.find((account) => account.account_id === selected),
     [accounts, selected],
   );
-  const selectedLabel = currentAccount ? accountLabel(currentAccount) : 'No identity';
+  const selectedLabel = currentAccount ? accountLabel(currentAccount) : t.noIdentity;
+
+  function updatePrefs(nextPrefs) {
+    setUiPrefs((current) => ({ ...current, ...nextPrefs }));
+  }
 
   function addActivity(title, detail) {
     setActivity((items) => [
@@ -104,7 +345,7 @@ function App() {
 
   async function loadStatus() {
     setNotice({ value: '', type: '' });
-    setStatus({ text: 'Loading', type: '' });
+    setStatus({ text: t.loading, type: '' });
     const [statusResp, accountsResp] = await Promise.all([
       fetch('/api/status'),
       fetch('/api/accounts'),
@@ -119,24 +360,22 @@ function App() {
       return nextAccounts[0]?.account_id || '';
     });
     setStatus({
-      text: payload.account_count
-        ? `${payload.account_count} WeChat identity${payload.account_count === 1 ? '' : 'ies'} ready`
-        : 'Ready for local chat',
+      text: payload.account_count ? t.identitiesReady(payload.account_count) : t.readyLocal,
       type: 'ok',
     });
-    addActivity('Workspace refreshed', `${payload.account_count} WeChat identity${payload.account_count === 1 ? '' : 'ies'} available`);
+    addActivity(t.workspaceRefreshed, t.identitiesAvailable(payload.account_count));
   }
 
   async function loadConfig() {
-    setConfigNotice({ value: 'Loading', type: 'pending' });
+    setConfigNotice({ value: t.loading, type: 'pending' });
     const resp = await fetch('/api/config');
     if (!resp.ok) throw new Error(await resp.text());
     const payload = await resp.json();
     setConfigLoaded(true);
     setConfigPath(payload.path || '');
     setConfigText(JSON.stringify(payload.config || {}, null, 2));
-    setConfigNotice({ value: 'Loaded', type: 'ok' });
-    addActivity('Preferences loaded', payload.path || 'settings file');
+    setConfigNotice({ value: t.loaded, type: 'ok' });
+    addActivity(t.preferencesLoaded, payload.path || t.settingsFile);
   }
 
   function parseConfig() {
@@ -147,7 +386,7 @@ function App() {
   async function saveConfig() {
     const cfg = parseConfig();
     setConfigText(JSON.stringify(cfg, null, 2));
-    setConfigNotice({ value: 'Saving', type: 'pending' });
+    setConfigNotice({ value: t.saving, type: 'pending' });
     setIsSavingConfig(true);
     try {
       const resp = await fetch('/api/config', {
@@ -160,9 +399,9 @@ function App() {
       setConfigLoaded(true);
       setConfigPath(payload.path || '');
       setConfigText(JSON.stringify(payload.config || {}, null, 2));
-      const savedMessage = payload.reload_required ? 'Saved; restart when convenient' : 'Saved';
+      const savedMessage = payload.reload_required ? t.savedRestart : t.saved;
       setConfigNotice({ value: savedMessage, type: 'ok' });
-      addActivity('Preferences saved', savedMessage);
+      addActivity(t.preferencesSaved, savedMessage);
     } finally {
       setIsSavingConfig(false);
     }
@@ -170,7 +409,7 @@ function App() {
 
   async function sendMessage(event) {
     event.preventDefault();
-    setNotice({ value: 'Sending', type: 'pending' });
+    setNotice({ value: t.sending, type: 'pending' });
     setIsSending(true);
     const payload = {
       account_id: selected,
@@ -185,11 +424,11 @@ function App() {
         body: JSON.stringify(payload),
       });
       if (!resp.ok) throw new Error(await resp.text());
-      setNotice({ value: 'Sent', type: 'ok' });
-      addActivity('Message sent', `Prepared for ${payload.to}`);
+      setNotice({ value: t.sent, type: 'ok' });
+      addActivity(t.messageSent, t.preparedFor(payload.to));
     } catch (err) {
       setNotice({ value: err.message || String(err), type: 'error' });
-      addActivity('Send needs attention', err.message || String(err));
+      addActivity(t.sendNeedsAttention, err.message || String(err));
     } finally {
       setIsSending(false);
     }
@@ -198,15 +437,15 @@ function App() {
   async function sendLocalChat(messageOverride = '') {
     const message = messageOverride || chat.message.trim();
     if (!message) {
-      setChatNotice({ value: 'Message is required', type: 'error' });
+      setChatNotice({ value: t.messageRequired, type: 'error' });
       return;
     }
     const conversationId = chat.conversation_id.trim() || 'web';
     setChat((value) => ({ ...value, conversation_id: conversationId }));
-    setChatNotice({ value: 'Sending', type: 'pending' });
+    setChatNotice({ value: t.sending, type: 'pending' });
     setIsChatting(true);
     if (!messageOverride) {
-      setChatLog((items) => [...items, { role: 'user', label: 'You', text: message }]);
+      setChatLog((items) => [...items, { role: 'user', label: t.you, text: message }]);
     }
     try {
       const resp = await fetch('/api/chat', {
@@ -222,16 +461,16 @@ function App() {
       const payload = await resp.json();
       setChatLog((items) => [
         ...items,
-        { role: 'agent', label: payload.agent || 'Agent', text: payload.reply || '' },
+        { role: 'agent', label: payload.agent || t.assistantTitle, text: payload.reply || '' },
       ]);
-      setChatNotice({ value: 'Ready', type: 'ok' });
-      addActivity('Assistant replied', payload.agent || 'default assistant');
+      setChatNotice({ value: t.ready, type: 'ok' });
+      addActivity(t.assistantReplied, payload.agent || t.defaultAssistant);
       if (!messageOverride) {
         setChat((value) => ({ ...value, message: '' }));
       }
     } catch (err) {
       setChatNotice({ value: err.message || String(err), type: 'error' });
-      addActivity('Assistant needs attention', err.message || String(err));
+      addActivity(t.assistantNeedsAttention, err.message || String(err));
     } finally {
       setIsChatting(false);
     }
@@ -239,9 +478,9 @@ function App() {
 
   useEffect(() => {
     loadStatus().catch((err) => {
-      setStatus({ text: 'offline', type: 'error' });
+      setStatus({ text: t.offline, type: 'error' });
       setNotice({ value: err.message || String(err), type: 'error' });
-      addActivity('Workspace unavailable', err.message || String(err));
+      addActivity(t.workspaceUnavailable, err.message || String(err));
     });
   }, []);
 
@@ -249,10 +488,32 @@ function App() {
     if (view === 'config' && !configLoaded) {
       loadConfig().catch((err) => {
         setConfigNotice({ value: err.message || String(err), type: 'error' });
-        addActivity('Preferences unavailable', err.message || String(err));
+        addActivity(t.preferencesUnavailable, err.message || String(err));
       });
     }
   }, [view, configLoaded]);
+
+  useEffect(() => {
+    document.documentElement.lang = uiPrefs.language === 'zh' ? 'zh-CN' : 'en';
+    document.documentElement.dataset.mode = uiPrefs.mode;
+    document.documentElement.dataset.theme = uiPrefs.theme;
+    window.localStorage.setItem(UI_PREFS_KEY, JSON.stringify(uiPrefs));
+  }, [uiPrefs]);
+
+  useEffect(() => {
+    setStatus((current) => {
+      if (current.type === 'ok') {
+        return {
+          ...current,
+          text: accounts.length ? t.identitiesReady(accounts.length) : t.readyLocal,
+        };
+      }
+      if (current.type === 'error') {
+        return { ...current, text: t.offline };
+      }
+      return { ...current, text: t.loading };
+    });
+  }, [uiPrefs.language, accounts.length]);
 
   const configSummary = useMemo(() => {
     try {
@@ -278,7 +539,7 @@ function App() {
             </div>
             <div>
               <h1>Welinker</h1>
-              <p className="brand-subtitle">a quiet desk for WeChat and your assistant</p>
+              <p className="brand-subtitle">{t.brandSubtitle}</p>
             </div>
           </div>
           <div className="toolbar" aria-live="polite">
@@ -287,12 +548,40 @@ function App() {
               <span>{status.text}</span>
             </div>
             <div className="metric">
-              <span>Identities</span>
+              <span>{t.identities}</span>
               <strong>{accounts.length}</strong>
             </div>
+            <label className="select-pill" title={t.theme}>
+              <Palette size={15} aria-hidden="true" />
+              <select
+                aria-label={t.theme}
+                value={uiPrefs.theme}
+                onChange={(event) => updatePrefs({ theme: event.target.value })}
+              >
+                {themes.map((theme) => (
+                  <option key={theme.id} value={theme.id}>
+                    {theme.label[uiPrefs.language]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="segmented-control" aria-label={t.language}>
+              <Languages size={15} aria-hidden="true" />
+              <button type="button" aria-pressed={uiPrefs.language === 'zh'} onClick={() => updatePrefs({ language: 'zh' })}>中</button>
+              <button type="button" aria-pressed={uiPrefs.language === 'en'} onClick={() => updatePrefs({ language: 'en' })}>EN</button>
+            </div>
+            <button
+              className="mode-toggle"
+              type="button"
+              aria-label={uiPrefs.mode === 'dark' ? t.light : t.dark}
+              onClick={() => updatePrefs({ mode: uiPrefs.mode === 'dark' ? 'light' : 'dark' })}
+            >
+              {uiPrefs.mode === 'dark' ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
+              <span>{uiPrefs.mode === 'dark' ? t.light : t.dark}</span>
+            </button>
             <div className="mood-pill">
               <Sparkles size={15} aria-hidden="true" />
-              <span>Calm mode</span>
+              <span>{t.calmMode}</span>
             </div>
           </div>
         </div>
@@ -300,20 +589,20 @@ function App() {
 
       <main className="shell">
         <nav className="view-tabs" aria-label="Welinker sections">
-          <button className="tab-button" type="button" aria-selected={view === 'message'} onClick={() => setView('message')}>Compose</button>
-          <button className="tab-button" type="button" aria-selected={view === 'chat'} onClick={() => setView('chat')}>Assistant</button>
-          <button className="tab-button" type="button" aria-selected={view === 'config'} onClick={() => setView('config')}>Preferences</button>
+          <button className="tab-button" type="button" aria-selected={view === 'message'} onClick={() => setView('message')}>{t.compose}</button>
+          <button className="tab-button" type="button" aria-selected={view === 'chat'} onClick={() => setView('chat')}>{t.assistant}</button>
+          <button className="tab-button" type="button" aria-selected={view === 'config'} onClick={() => setView('config')}>{t.preferences}</button>
         </nav>
 
         <section className="workspace-hero" aria-label="Workspace overview">
           <div>
-            <p className="eyebrow">Today in Welinker</p>
-            <h2>Send with a lighter touch.</h2>
-            <p className="hero-copy">Choose an identity, write the message, and keep your assistant close when you need a second pass.</p>
+            <p className="eyebrow">{t.today}</p>
+            <h2>{t.heroTitle}</h2>
+            <p className="hero-copy">{t.heroCopy}</p>
           </div>
           <div className="hero-stats" aria-label="Workspace status">
-            <div><span>Ready identities</span><strong>{accounts.length}</strong></div>
-            <div><span>Current identity</span><strong>{shortValue(selectedLabel)}</strong></div>
+            <div><span>{t.readyIdentities}</span><strong>{accounts.length}</strong></div>
+            <div><span>{t.currentIdentity}</span><strong>{shortValue(selectedLabel)}</strong></div>
           </div>
         </section>
 
@@ -324,13 +613,13 @@ function App() {
                 <div className="panel-title">
                   <Users size={18} aria-hidden="true" />
                   <div>
-                    <h2 id="accountsTitle">WeChat identities</h2>
-                    <p className="panel-description">Pick where this message should come from</p>
+                    <h2 id="accountsTitle">{t.wechatIdentities}</h2>
+                    <p className="panel-description">{t.pickIdentity}</p>
                   </div>
                 </div>
-                <button className="btn" type="button" title="Refresh accounts" onClick={() => loadStatus().catch((err) => setNotice({ value: err.message || String(err), type: 'error' }))}>
+                <button className="btn" type="button" title={t.refresh} onClick={() => loadStatus().catch((err) => setNotice({ value: err.message || String(err), type: 'error' }))}>
                   <RefreshCw size={16} aria-hidden="true" />
-                  Refresh
+                  {t.refresh}
                 </button>
               </div>
               <div className="panel-body account-list">
@@ -340,18 +629,18 @@ function App() {
                     <button key={id} type="button" className="account-card" aria-pressed={id === selected} onClick={() => setSelected(id)}>
                       <div className="account-top">
                         <div className="account-name">{accountLabel(account)}</div>
-                        <span className={id === selected ? 'badge primary' : 'badge neutral'}>{id === selected ? 'In use' : 'Available'}</span>
+                        <span className={id === selected ? 'badge primary' : 'badge neutral'}>{id === selected ? t.inUse : t.available}</span>
                       </div>
                       <div className="account-meta">
-                        <span>{account.user_id || 'user unknown'}</span>
-                        <span>{account.base_url || 'default home'}</span>
+                        <span>{account.user_id || t.userUnknown}</span>
+                        <span>{account.base_url || t.defaultHome}</span>
                       </div>
                     </button>
                   );
                 }) : (
                   <div className="empty-state">
                     <AlertTriangle size={26} aria-hidden="true" />
-                    <span>No WeChat identity is connected yet.</span>
+                    <span>{t.identityEmpty}</span>
                   </div>
                 )}
               </div>
@@ -363,8 +652,8 @@ function App() {
                   <div className="panel-title">
                     <Send size={18} aria-hidden="true" />
                     <div>
-                      <h2 id="sendTitle">Compose message</h2>
-                      <p className="panel-description">Write once, then send through the selected identity</p>
+                      <h2 id="sendTitle">{t.composeMessage}</h2>
+                      <p className="panel-description">{t.composeDescription}</p>
                     </div>
                   </div>
                   <span className="badge primary">{selectedLabel}</span>
@@ -372,27 +661,27 @@ function App() {
                 <div className="panel-body">
                   <form onSubmit={sendMessage}>
                     <div className="form-grid">
-                      <Field label="From" hint="Required" htmlFor="accountSelect">
+                      <Field label={t.from} hint={t.required} htmlFor="accountSelect">
                         <select className="control" id="accountSelect" value={selected} onChange={(event) => setSelected(event.target.value)}>
                           {accounts.length ? accounts.map((account) => (
                             <option key={account.account_id} value={account.account_id}>{accountLabel(account)}</option>
-                          )) : <option value="">No identity</option>}
+                          )) : <option value="">{t.noIdentity}</option>}
                         </select>
                       </Field>
-                      <Field label="To" hint="WeChat contact id" htmlFor="to">
+                      <Field label={t.to} hint={t.contactHint} htmlFor="to">
                         <input className="control" id="to" value={form.to} autoComplete="off" placeholder="user_id@im.wechat" required onChange={(event) => setForm({ ...form, to: event.target.value })} />
                       </Field>
                     </div>
-                    <Field label="Message" hint={`${form.text.length} characters`} htmlFor="text">
-                      <textarea className="control message-control" id="text" value={form.text} placeholder="Write something clear and kind." onChange={(event) => setForm({ ...form, text: event.target.value })} />
+                    <Field label={t.message} hint={`${form.text.length} ${t.characters}`} htmlFor="text">
+                      <textarea className="control message-control" id="text" value={form.text} placeholder={t.messagePlaceholder} onChange={(event) => setForm({ ...form, text: event.target.value })} />
                     </Field>
-                    <Field label="Attachment link" hint="Optional" htmlFor="mediaUrl">
+                    <Field label={t.attachmentLink} hint={t.optional} htmlFor="mediaUrl">
                       <input className="control" id="mediaUrl" value={form.media_url} autoComplete="off" placeholder="https://example.com/image.png" onChange={(event) => setForm({ ...form, media_url: event.target.value })} />
                     </Field>
-                    <div className="composer-meta" aria-label="Message details">
-                      <div className="mini-stat"><span>From</span><strong>{shortValue(selectedLabel)}</strong></div>
-                      <div className="mini-stat"><span>To</span><strong>{shortValue(form.to.trim(), 'Not set')}</strong></div>
-                      <div className="mini-stat"><span>Attachment</span><strong>{shortValue(form.media_url.trim(), 'None')}</strong></div>
+                    <div className="composer-meta" aria-label={t.message}>
+                      <div className="mini-stat"><span>{t.from}</span><strong>{shortValue(selectedLabel)}</strong></div>
+                      <div className="mini-stat"><span>{t.to}</span><strong>{shortValue(form.to.trim(), t.notSet)}</strong></div>
+                      <div className="mini-stat"><span>{t.attachmentLink}</span><strong>{shortValue(form.media_url.trim(), t.none)}</strong></div>
                     </div>
                     <div className="actions">
                       <Notice value={notice.value} type={notice.type} />
@@ -400,14 +689,14 @@ function App() {
                         <button className="btn" type="button" onClick={() => {
                           setForm({ to: '', text: '', media_url: '' });
                           setNotice({ value: '', type: '' });
-                          addActivity('Draft cleared', 'The message area is fresh again');
+                          addActivity(t.draftCleared, t.draftClearedDetail);
                         }}>
                           <Trash2 size={16} aria-hidden="true" />
-                          Clear
+                          {t.clear}
                         </button>
                         <button className="btn primary" type="submit" disabled={isSending}>
                           <Send size={16} aria-hidden="true" />
-                          Send message
+                          {t.sendMessage}
                         </button>
                       </div>
                     </div>
@@ -415,7 +704,7 @@ function App() {
                 </div>
               </section>
 
-              <ActivityPanel items={activity} />
+              <ActivityPanel items={activity} t={t} />
             </div>
           </div>
         ) : null}
@@ -427,8 +716,8 @@ function App() {
                 <div className="panel-title">
                   <MessageCircle size={18} aria-hidden="true" />
                   <div>
-                    <h2 id="chatTitle">Assistant</h2>
-                    <p className="panel-description">Draft, revise, and think beside the message</p>
+                    <h2 id="chatTitle">{t.assistantTitle}</h2>
+                    <p className="panel-description">{t.assistantDescription}</p>
                   </div>
                 </div>
                 <span className="badge neutral">{shortValue(chat.conversation_id.trim(), 'web')}</span>
@@ -439,10 +728,10 @@ function App() {
                   sendLocalChat();
                 }}>
                   <div className="form-grid">
-                    <Field label="Assistant name" hint="Optional" htmlFor="chatAgent">
+                    <Field label={t.assistantName} hint={t.optional} htmlFor="chatAgent">
                       <input className="control" id="chatAgent" value={chat.agent} autoComplete="off" placeholder="default, codex, hermes" onChange={(event) => setChat({ ...chat, agent: event.target.value })} />
                     </Field>
-                    <Field label="Thread" hint="Keeps context" htmlFor="chatConversation">
+                    <Field label={t.thread} hint={t.keepsContext} htmlFor="chatConversation">
                       <input className="control" id="chatConversation" value={chat.conversation_id} autoComplete="off" onChange={(event) => setChat({ ...chat, conversation_id: event.target.value })} />
                     </Field>
                   </div>
@@ -452,10 +741,10 @@ function App() {
                         <div className="chat-role">{entry.label}</div>
                         <div className="chat-text">{entry.text}</div>
                       </div>
-                    )) : <div className="empty-state">No local chat messages yet.</div>}
+                    )) : <div className="empty-state">{t.noChat}</div>}
                   </div>
-                  <Field label="Prompt" hint="Use New to reset" htmlFor="chatMessage">
-                    <textarea className="control message-control" id="chatMessage" value={chat.message} placeholder="Ask for a rewrite, a reply idea, or a quick summary." onChange={(event) => setChat({ ...chat, message: event.target.value })} />
+                  <Field label={t.prompt} hint={t.promptHint} htmlFor="chatMessage">
+                    <textarea className="control message-control" id="chatMessage" value={chat.message} placeholder={t.promptPlaceholder} onChange={(event) => setChat({ ...chat, message: event.target.value })} />
                   </Field>
                   <div className="actions">
                     <Notice value={chatNotice.value} type={chatNotice.type} />
@@ -467,11 +756,11 @@ function App() {
                         sendLocalChat('/new');
                       }}>
                         <Plus size={16} aria-hidden="true" />
-                        New
+                        {t.new}
                       </button>
                       <button className="btn primary" type="submit" disabled={isChatting}>
                         <Send size={16} aria-hidden="true" />
-                        Send
+                        {t.send}
                       </button>
                     </div>
                   </div>
@@ -488,21 +777,21 @@ function App() {
                 <div className="panel-title">
                   <Settings size={18} aria-hidden="true" />
                   <div>
-                    <h2 id="configTitle">Preferences</h2>
-                    <p className="panel-description">Tune the workspace when you need deeper control</p>
+                    <h2 id="configTitle">{t.preferences}</h2>
+                    <p className="panel-description">{t.preferencesDescription}</p>
                   </div>
                 </div>
-                <span className={configNotice.type === 'ok' ? 'badge primary' : 'badge neutral'}>{configNotice.value || (configLoaded ? 'Edited' : 'Not loaded')}</span>
+                <span className={configNotice.type === 'ok' ? 'badge primary' : 'badge neutral'}>{configNotice.value || (configLoaded ? t.edited : t.notLoaded)}</span>
               </div>
               <div className="panel-body">
                 <form onSubmit={(event) => {
                   event.preventDefault();
                   saveConfig().catch((err) => {
                     setConfigNotice({ value: err.message || String(err), type: 'error' });
-                    addActivity('Preferences save failed', err.message || String(err));
+                    addActivity(t.preferencesSaveFailed, err.message || String(err));
                   });
                 }}>
-                  <Field label="Advanced preferences" hint={shortValue(configPath, emptyConfigPath)} htmlFor="configEditor">
+                  <Field label={t.advancedPreferences} hint={shortValue(configPath, emptyConfigPath)} htmlFor="configEditor">
                     <textarea className="control config-editor" id="configEditor" spellCheck="false" autoComplete="off" value={configText} onChange={(event) => {
                       setConfigText(event.target.value);
                       setConfigNotice({ value: '', type: '' });
@@ -513,30 +802,30 @@ function App() {
                     <div className="button-group">
                       <button className="btn" type="button" onClick={() => loadConfig().catch((err) => setConfigNotice({ value: err.message || String(err), type: 'error' }))}>
                         <RefreshCw size={16} aria-hidden="true" />
-                        Reload
+                        {t.reload}
                       </button>
                       <button className="btn" type="button" onClick={() => {
                         try {
                           const cfg = parseConfig();
                           setConfigText(JSON.stringify(cfg, null, 2));
-                          setConfigNotice({ value: 'Formatted', type: 'ok' });
+                          setConfigNotice({ value: t.formatted, type: 'ok' });
                         } catch (err) {
                           setConfigNotice({ value: err.message || String(err), type: 'error' });
                         }
                       }}>
                         <ListChecks size={16} aria-hidden="true" />
-                        Format
+                        {t.format}
                       </button>
                       <button className="btn primary" type="submit" disabled={isSavingConfig}>
                         <Save size={16} aria-hidden="true" />
-                        Save
+                        {t.save}
                       </button>
                     </div>
                   </div>
                 </form>
               </div>
             </section>
-            <ConfigSummary summary={configSummary} path={configPath} />
+            <ConfigSummary summary={configSummary} path={configPath} t={t} />
           </div>
         ) : null}
       </main>
@@ -544,18 +833,18 @@ function App() {
   );
 }
 
-function ActivityPanel({ items }) {
+function ActivityPanel({ items, t }) {
   return (
     <section className="panel activity" aria-labelledby="activityTitle">
       <div className="panel-head">
         <div className="panel-title">
           <Activity size={18} aria-hidden="true" />
           <div>
-            <h2 id="activityTitle">Recent moments</h2>
-            <p className="panel-description">What changed during this visit</p>
+            <h2 id="activityTitle">{t.recentMoments}</h2>
+            <p className="panel-description">{t.recentDescription}</p>
           </div>
         </div>
-        <span className="badge neutral">{items.length} event{items.length === 1 ? '' : 's'}</span>
+        <span className="badge neutral">{t.events(items.length)}</span>
       </div>
       <div className="panel-body activity-list">
         {items.length ? items.map((item, index) => (
@@ -566,13 +855,13 @@ function ActivityPanel({ items }) {
             </div>
             <div className="activity-time">{item.time}</div>
           </div>
-        )) : <div className="empty-state">Nothing has happened yet.</div>}
+        )) : <div className="empty-state">{t.nothingYet}</div>}
       </div>
     </section>
   );
 }
 
-function ConfigSummary({ summary, path }) {
+function ConfigSummary({ summary, path, t }) {
   const config = summary.config || {};
   return (
     <section className="panel" aria-labelledby="configSummaryTitle">
@@ -580,24 +869,24 @@ function ConfigSummary({ summary, path }) {
         <div className="panel-title">
           <FileJson size={18} aria-hidden="true" />
           <div>
-            <h2 id="configSummaryTitle">At a glance</h2>
-            <p className="panel-description">Current workspace settings</p>
+            <h2 id="configSummaryTitle">{t.atAGlance}</h2>
+            <p className="panel-description">{t.summaryDescription}</p>
           </div>
         </div>
       </div>
       <div className="panel-body config-summary">
         {!summary.ok ? <div className="notice error"><X size={16} aria-hidden="true" /><span>{summary.error}</span></div> : null}
-        <div className="mini-stat"><span>Saved at</span><strong className="config-path">{path || emptyConfigPath}</strong></div>
-        <div className="mini-stat"><span>Default assistant</span><strong>{config.default_agent || '-'}</strong></div>
-        <div className="mini-stat"><span>Listening on</span><strong>{config.api_addr || '127.0.0.1:18011'}</strong></div>
-        <div className="mini-stat"><span>Assistants</span><strong>{summary.agents.length}</strong></div>
+        <div className="mini-stat"><span>{t.savedAt}</span><strong className="config-path">{path || emptyConfigPath}</strong></div>
+        <div className="mini-stat"><span>{t.defaultAssistantLabel}</span><strong>{config.default_agent || '-'}</strong></div>
+        <div className="mini-stat"><span>{t.listeningOn}</span><strong>{config.api_addr || '127.0.0.1:18011'}</strong></div>
+        <div className="mini-stat"><span>{t.assistants}</span><strong>{summary.agents.length}</strong></div>
         <div className="agent-list">
           {summary.agents.length ? summary.agents.map(({ name, value }) => (
             <div className="agent-row" key={name}>
               <strong>{name}</strong>
               <span>{value.kind || value.type || 'unknown'} · {value.model || value.command || value.endpoint || 'default'}</span>
             </div>
-          )) : <div className="empty-state">No assistants are configured.</div>}
+          )) : <div className="empty-state">{t.noAssistants}</div>}
         </div>
       </div>
     </section>
