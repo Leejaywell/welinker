@@ -303,6 +303,7 @@ function App() {
   const [configLoaded, setConfigLoaded] = useState(false);
   const [configPath, setConfigPath] = useState('');
   const [configText, setConfigText] = useState('');
+  const [agentOptions, setAgentOptions] = useState([]);
   const [chatLog, setChatLog] = useState([]);
   const [form, setForm] = useState({
     to: '',
@@ -363,16 +364,41 @@ function App() {
     addActivity(t.workspaceRefreshed, t.identitiesAvailable(payload.account_count));
   }
 
+  function applyAgentOptions(cfg) {
+    const agents = cfg.agents && typeof cfg.agents === 'object' ? cfg.agents : {};
+    const agentNames = Object.keys(agents).sort();
+    setAgentOptions(agentNames);
+    setChat((value) => {
+      if (value.agent || !cfg.default_agent || !agentNames.includes(cfg.default_agent)) {
+        return value;
+      }
+      return { ...value, agent: cfg.default_agent };
+    });
+  }
+
+  function applyConfigPayload(payload) {
+    const cfg = payload.config || {};
+    setConfigLoaded(true);
+    setConfigPath(payload.path || '');
+    setConfigText(JSON.stringify(cfg, null, 2));
+    applyAgentOptions(cfg);
+  }
+
   async function loadConfig() {
     setConfigNotice({ value: t.loading, type: 'pending' });
     const resp = await fetch('/api/config');
     if (!resp.ok) throw new Error(await resp.text());
     const payload = await resp.json();
-    setConfigLoaded(true);
-    setConfigPath(payload.path || '');
-    setConfigText(JSON.stringify(payload.config || {}, null, 2));
+    applyConfigPayload(payload);
     setConfigNotice({ value: t.loaded, type: 'ok' });
     addActivity(t.preferencesLoaded, payload.path || t.settingsFile);
+  }
+
+  async function loadAssistantOptions() {
+    const resp = await fetch('/api/config');
+    if (!resp.ok) return;
+    const payload = await resp.json();
+    applyAgentOptions(payload.config || {});
   }
 
   function parseConfig() {
@@ -393,9 +419,7 @@ function App() {
       });
       if (!resp.ok) throw new Error(await resp.text());
       const payload = await resp.json();
-      setConfigLoaded(true);
-      setConfigPath(payload.path || '');
-      setConfigText(JSON.stringify(payload.config || {}, null, 2));
+      applyConfigPayload(payload);
       const savedMessage = payload.reload_required ? t.savedRestart : t.saved;
       setConfigNotice({ value: savedMessage, type: 'ok' });
       addActivity(t.preferencesSaved, savedMessage);
@@ -431,13 +455,16 @@ function App() {
     }
   }
 
-  async function sendLocalChat(messageOverride = '') {
+  async function sendLocalChat(messageOverride = '', conversationOverride = '') {
+    if (isChatting) {
+      return;
+    }
     const message = messageOverride || chat.message.trim();
     if (!message) {
       setChatNotice({ value: t.messageRequired, type: 'error' });
       return;
     }
-    const conversationId = chat.conversation_id.trim() || 'web';
+    const conversationId = conversationOverride || chat.conversation_id.trim() || 'web';
     setChat((value) => ({ ...value, conversation_id: conversationId }));
     setChatNotice({ value: t.sending, type: 'pending' });
     setIsChatting(true);
@@ -479,6 +506,7 @@ function App() {
       setNotice({ value: err.message || String(err), type: 'error' });
       addActivity(t.workspaceUnavailable, err.message || String(err));
     });
+    loadAssistantOptions().catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -709,14 +737,14 @@ function App() {
                   event.preventDefault();
                   sendLocalChat();
                 }}>
-                  <div className="form-grid">
-                    <Field label={t.assistantName} hint={t.optional} htmlFor="chatAgent">
-                      <input className="control" id="chatAgent" value={chat.agent} autoComplete="off" placeholder="default, codex, hermes" onChange={(event) => setChat({ ...chat, agent: event.target.value })} />
-                    </Field>
-                    <Field label={t.thread} hint={t.keepsContext} htmlFor="chatConversation">
-                      <input className="control" id="chatConversation" value={chat.conversation_id} autoComplete="off" onChange={(event) => setChat({ ...chat, conversation_id: event.target.value })} />
-                    </Field>
-                  </div>
+                  <Field label={t.assistantName} hint={t.optional} htmlFor="chatAgent">
+                    <select className="control" id="chatAgent" value={chat.agent} onChange={(event) => setChat({ ...chat, agent: event.target.value })}>
+                      <option value="">{t.defaultAssistant}</option>
+                      {agentOptions.map((name) => (
+                        <option key={name} value={name}>{name}</option>
+                      ))}
+                    </select>
+                  </Field>
                   <div className="chat-log" aria-live="polite">
                     {chatLog.length ? chatLog.map((entry, index) => (
                       <div className={`chat-bubble ${entry.role}`} key={`${entry.role}-${index}`}>
@@ -726,7 +754,19 @@ function App() {
                     )) : <div className="empty-state">{t.noChat}</div>}
                   </div>
                   <Field label={t.prompt} hint={t.promptHint} htmlFor="chatMessage">
-                    <textarea className="control message-control" id="chatMessage" value={chat.message} placeholder={t.promptPlaceholder} onChange={(event) => setChat({ ...chat, message: event.target.value })} />
+                    <textarea
+                      className="control message-control"
+                      id="chatMessage"
+                      value={chat.message}
+                      placeholder={t.promptPlaceholder}
+                      onChange={(event) => setChat({ ...chat, message: event.target.value })}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+                          event.preventDefault();
+                          sendLocalChat();
+                        }
+                      }}
+                    />
                   </Field>
                   <div className="actions">
                     <Notice value={chatNotice.value} type={chatNotice.type} />
@@ -735,7 +775,7 @@ function App() {
                         const id = `web-${Date.now().toString(36)}`;
                         setChat((value) => ({ ...value, conversation_id: id }));
                         setChatLog([]);
-                        sendLocalChat('/new');
+                        sendLocalChat('/new', id);
                       }}>
                         <Plus size={16} aria-hidden="true" />
                         {t.new}
