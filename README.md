@@ -22,6 +22,41 @@ Runtime files are stored under `~/.welinker`:
 - `~/.welinker/welinker.log`
 - `~/.welinker/welinker.pid`
 
+## Install
+
+Build dependencies:
+
+- Rust/Cargo
+- Node.js/npm, used to build the embedded WebUI
+
+Install from this checkout:
+
+```bash
+./install.sh
+```
+
+The default install location is `~/.local/bin/welinker`. Use another prefix when
+needed:
+
+```bash
+./install.sh --prefix /usr/local
+```
+
+Homebrew-assisted local install:
+
+```bash
+scripts/install-homebrew.sh
+```
+
+The Homebrew script installs missing `rust` and `node` formulae, then installs
+`welinker` into `$(brew --prefix)/bin`.
+
+Homebrew formula install from this repository:
+
+```bash
+brew install --HEAD ./Formula/welinker.rb
+```
+
 ## Usage
 
 ```bash
