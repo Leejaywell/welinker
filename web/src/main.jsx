@@ -465,7 +465,11 @@ function App() {
       return;
     }
     const conversationId = conversationOverride || chat.conversation_id.trim() || 'web';
-    setChat((value) => ({ ...value, conversation_id: conversationId }));
+    setChat((value) => ({
+      ...value,
+      conversation_id: conversationId,
+      message: messageOverride ? value.message : '',
+    }));
     setChatNotice({ value: t.sending, type: 'pending' });
     setIsChatting(true);
     if (!messageOverride) {
@@ -489,9 +493,6 @@ function App() {
       ]);
       setChatNotice({ value: t.ready, type: 'ok' });
       addActivity(t.assistantReplied, payload.agent || t.defaultAssistant);
-      if (!messageOverride) {
-        setChat((value) => ({ ...value, message: '' }));
-      }
     } catch (err) {
       setChatNotice({ value: err.message || String(err), type: 'error' });
       addActivity(t.assistantNeedsAttention, err.message || String(err));
