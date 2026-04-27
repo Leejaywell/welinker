@@ -264,13 +264,12 @@ h2 {
 }
 
 .status-pill,
-.metric,
-.mood-pill {
+.metric {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 36px;
-  border: 1px solid rgba(13, 148, 136, 0.13);
+  border: 1px solid rgba(var(--primary-rgb), 0.13);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.76);
   padding: 8px 12px;
@@ -284,49 +283,26 @@ h2 {
   font-weight: 800;
 }
 
-.mood-pill {
-  color: #9a4b0f;
-  background: rgba(255, 237, 213, 0.8);
-  border-color: rgba(249, 115, 22, 0.22);
-}
-
-.select-pill,
-.segmented-control,
-.mode-toggle {
-  min-height: 36px;
+.quick-prefs {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
+  color: var(--heading);
+}
+
+.button-toggle,
+.theme-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 36px;
   border: 1px solid rgba(var(--primary-rgb), 0.16);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.76);
-  color: var(--heading);
-  padding: 6px 10px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.select-pill select {
-  max-width: 92px;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-weight: 800;
-  outline: none;
-  cursor: pointer;
-}
-
-.segmented-control {
+  background: rgba(255, 255, 255, 0.68);
   padding: 4px;
 }
 
-.segmented-control svg {
-  margin-left: 6px;
-}
-
-.segmented-control button {
-  min-width: 36px;
+.button-toggle button {
   min-height: 28px;
   border: 0;
   border-radius: 999px;
@@ -334,18 +310,60 @@ h2 {
   color: var(--muted);
   font: inherit;
   font-weight: 800;
+  padding: 5px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   transition: color 180ms ease, background 180ms ease;
 }
 
-.segmented-control button[aria-pressed="true"] {
+.button-toggle button[aria-pressed="true"] {
   background: var(--primary);
   color: #ffffff;
 }
 
-.mode-toggle {
-  border-color: rgba(var(--accent-rgb), 0.22);
-  background: rgba(255, 255, 255, 0.76);
-  color: var(--heading);
+.theme-buttons {
+  gap: 5px;
+  padding-inline: 8px;
+}
+
+.theme-dot {
+  width: 22px;
+  height: 22px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7);
+  padding: 0;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.theme-dot:hover {
+  transform: translateY(-1px);
+}
+
+.theme-dot[aria-pressed="true"] {
+  border-color: var(--heading);
+}
+
+.theme-calm {
+  background: #0d9488;
+}
+
+.theme-lotus {
+  background: #be6274;
+}
+
+.theme-ocean {
+  background: #0284c7;
+}
+
+.theme-amber {
+  background: #b45309;
+}
+
+.theme-berry {
+  background: #9333ea;
 }
 
 .dot {
@@ -911,9 +929,8 @@ button:focus-visible {
 :root[data-mode="dark"] .activity-item,
 :root[data-mode="dark"] .chat-bubble,
 :root[data-mode="dark"] .agent-row,
-:root[data-mode="dark"] .select-pill,
-:root[data-mode="dark"] .segmented-control,
-:root[data-mode="dark"] .mode-toggle,
+:root[data-mode="dark"] .button-toggle,
+:root[data-mode="dark"] .theme-buttons,
 :root[data-mode="dark"] .status-pill,
 :root[data-mode="dark"] .metric {
   border-color: rgba(var(--primary-rgb), 0.26);
@@ -937,8 +954,7 @@ button:focus-visible {
 }
 
 :root[data-mode="dark"] .composer-meta,
-:root[data-mode="dark"] .chat-bubble.user,
-:root[data-mode="dark"] .mood-pill {
+:root[data-mode="dark"] .chat-bubble.user {
   border-color: rgba(var(--accent-rgb), 0.32);
   background: rgba(var(--accent-rgb), 0.12);
   color: var(--text);
@@ -962,11 +978,6 @@ button:focus-visible {
 :root[data-mode="dark"] .account-card:hover,
 :root[data-mode="dark"] .control:hover {
   background: rgba(255, 255, 255, 0.1);
-}
-
-:root[data-mode="dark"] .select-pill select option {
-  background: var(--surface-solid);
-  color: var(--text);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1014,20 +1025,22 @@ button:focus-visible {
     justify-content: stretch;
   }
 
-  .status-pill {
+  .status-pill,
+  .quick-prefs {
     grid-column: 1 / -1;
   }
 
   .status-pill,
-  .metric,
-  .mood-pill {
+  .metric {
     width: 100%;
     min-width: 0;
     justify-content: center;
   }
 
-  .mood-pill {
-    overflow: hidden;
+  .quick-prefs {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .workspace-hero {

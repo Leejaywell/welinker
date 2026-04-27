@@ -6,14 +6,11 @@ import {
   Check,
   Clock,
   FileJson,
-  Languages,
   ListChecks,
   MessageCircle,
   Moon,
-  Palette,
   Plus,
   RefreshCw,
-  Sparkles,
   Save,
   Send,
   Settings,
@@ -551,37 +548,34 @@ function App() {
               <span>{t.identities}</span>
               <strong>{accounts.length}</strong>
             </div>
-            <label className="select-pill" title={t.theme}>
-              <Palette size={15} aria-hidden="true" />
-              <select
-                aria-label={t.theme}
-                value={uiPrefs.theme}
-                onChange={(event) => updatePrefs({ theme: event.target.value })}
-              >
+            <div className="quick-prefs" aria-label={`${t.language} / ${t.theme}`}>
+              <div className="button-toggle" aria-label={t.language}>
+                <button type="button" aria-pressed={uiPrefs.language === 'zh'} onClick={() => updatePrefs({ language: 'zh' })}>中</button>
+                <button type="button" aria-pressed={uiPrefs.language === 'en'} onClick={() => updatePrefs({ language: 'en' })}>EN</button>
+              </div>
+              <div className="theme-buttons" aria-label={t.theme}>
                 {themes.map((theme) => (
-                  <option key={theme.id} value={theme.id}>
-                    {theme.label[uiPrefs.language]}
-                  </option>
+                  <button
+                    key={theme.id}
+                    className={`theme-dot theme-${theme.id}`}
+                    type="button"
+                    aria-label={theme.label[uiPrefs.language]}
+                    aria-pressed={uiPrefs.theme === theme.id}
+                    title={theme.label[uiPrefs.language]}
+                    onClick={() => updatePrefs({ theme: theme.id })}
+                  />
                 ))}
-              </select>
-            </label>
-            <div className="segmented-control" aria-label={t.language}>
-              <Languages size={15} aria-hidden="true" />
-              <button type="button" aria-pressed={uiPrefs.language === 'zh'} onClick={() => updatePrefs({ language: 'zh' })}>中</button>
-              <button type="button" aria-pressed={uiPrefs.language === 'en'} onClick={() => updatePrefs({ language: 'en' })}>EN</button>
-            </div>
-            <button
-              className="mode-toggle"
-              type="button"
-              aria-label={uiPrefs.mode === 'dark' ? t.light : t.dark}
-              onClick={() => updatePrefs({ mode: uiPrefs.mode === 'dark' ? 'light' : 'dark' })}
-            >
-              {uiPrefs.mode === 'dark' ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
-              <span>{uiPrefs.mode === 'dark' ? t.light : t.dark}</span>
-            </button>
-            <div className="mood-pill">
-              <Sparkles size={15} aria-hidden="true" />
-              <span>{t.calmMode}</span>
+              </div>
+              <div className="button-toggle" aria-label={`${t.light} / ${t.dark}`}>
+                <button type="button" aria-pressed={uiPrefs.mode === 'light'} onClick={() => updatePrefs({ mode: 'light' })}>
+                  <Sun size={14} aria-hidden="true" />
+                  <span>{t.light}</span>
+                </button>
+                <button type="button" aria-pressed={uiPrefs.mode === 'dark'} onClick={() => updatePrefs({ mode: 'dark' })}>
+                  <Moon size={14} aria-hidden="true" />
+                  <span>{t.dark}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
