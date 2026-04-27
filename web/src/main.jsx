@@ -34,7 +34,7 @@ const themes = [
 const copy = {
   en: {
     loading: 'Loading',
-    readyLocal: 'Ready for local chat',
+    readyLocal: 'Ready',
     offline: 'offline',
     identity: 'identity',
     identities: 'identities',
@@ -46,7 +46,7 @@ const copy = {
     unknown: 'unknown',
     userUnknown: 'user unknown',
     defaultHome: 'default home',
-    brandSubtitle: 'a quiet desk for WeChat and your assistant',
+    brandSubtitle: '',
     calmMode: 'Calm mode',
     language: 'Language',
     theme: 'Theme',
@@ -55,25 +55,25 @@ const copy = {
     compose: 'Compose',
     assistant: 'Assistant',
     preferences: 'Preferences',
-    today: 'Today in Welinker',
-    heroTitle: 'Send with a lighter touch.',
-    heroCopy: 'Choose an identity, write the message, and keep your assistant close when you need a second pass.',
-    readyIdentities: 'Ready identities',
-    currentIdentity: 'Current identity',
-    pickIdentity: 'Pick where this message should come from',
+    today: '',
+    heroTitle: 'Send',
+    heroCopy: '',
+    readyIdentities: 'Identities',
+    currentIdentity: 'Current',
+    pickIdentity: '',
     refresh: 'Refresh',
     identityEmpty: 'No WeChat identity is connected yet.',
     composeMessage: 'Compose message',
-    composeDescription: 'Write once, then send through the selected identity',
+    composeDescription: '',
     from: 'From',
     to: 'To',
-    required: 'Required',
-    contactHint: 'WeChat contact id',
+    required: '',
+    contactHint: '',
     message: 'Message',
     characters: 'characters',
-    messagePlaceholder: 'Write something clear and kind.',
+    messagePlaceholder: '',
     attachmentLink: 'Attachment link',
-    optional: 'Optional',
+    optional: '',
     notSet: 'Not set',
     none: 'None',
     clear: 'Clear',
@@ -88,15 +88,15 @@ const copy = {
     preparedFor: (to) => `Prepared for ${to}`,
     sendNeedsAttention: 'Send needs attention',
     assistantTitle: 'Assistant',
-    assistantDescription: 'Draft, revise, and think beside the message',
+    assistantDescription: '',
     assistantName: 'Assistant name',
     thread: 'Thread',
     keepsContext: 'Keeps context',
     prompt: 'Prompt',
     new: 'New',
     send: 'Send',
-    promptHint: 'Use New to reset',
-    promptPlaceholder: 'Ask for a rewrite, a reply idea, or a quick summary.',
+    promptHint: '',
+    promptPlaceholder: '',
     noChat: 'No local chat messages yet.',
     messageRequired: 'Message is required',
     ready: 'Ready',
@@ -104,7 +104,7 @@ const copy = {
     defaultAssistant: 'default assistant',
     you: 'You',
     assistantNeedsAttention: 'Assistant needs attention',
-    preferencesDescription: 'Tune the workspace when you need deeper control',
+    preferencesDescription: '',
     notLoaded: 'Not loaded',
     edited: 'Edited',
     loaded: 'Loaded',
@@ -137,19 +137,19 @@ const copy = {
   },
   zh: {
     loading: '加载中',
-    readyLocal: '本地对话已就绪',
+    readyLocal: '就绪',
     offline: '离线',
     identity: '身份',
     identities: '身份',
     wechatIdentity: '微信身份',
     wechatIdentities: '微信身份',
-    identitiesReady: (count) => `${count} 个微信身份可用`,
-    identitiesAvailable: (count) => `${count} 个微信身份可用`,
+    identitiesReady: (count) => `${count} 个身份`,
+    identitiesAvailable: (count) => `${count} 个身份`,
     noIdentity: '未选择身份',
     unknown: '未知',
     userUnknown: '用户未知',
     defaultHome: '默认入口',
-    brandSubtitle: '微信消息与助手的安静工作台',
+    brandSubtitle: '',
     calmMode: '静心模式',
     language: '语言',
     theme: '主题',
@@ -158,25 +158,25 @@ const copy = {
     compose: '撰写',
     assistant: '助手',
     preferences: '偏好',
-    today: '今日 Welinker',
-    heroTitle: '轻松写好每条消息。',
-    heroCopy: '选择微信身份，写下消息，需要时让助手在旁边帮你润色或整理思路。',
-    readyIdentities: '可用身份',
-    currentIdentity: '当前身份',
-    pickIdentity: '选择这条消息从哪里发出',
+    today: '',
+    heroTitle: '发送',
+    heroCopy: '',
+    readyIdentities: '身份',
+    currentIdentity: '当前',
+    pickIdentity: '',
     refresh: '刷新',
     identityEmpty: '还没有连接微信身份。',
     composeMessage: '撰写消息',
-    composeDescription: '写好一次，再通过选中的身份发送',
+    composeDescription: '',
     from: '发送身份',
     to: '发送对象',
-    required: '必填',
-    contactHint: '微信联系人 ID',
+    required: '',
+    contactHint: '',
     message: '消息',
     characters: '字符',
-    messagePlaceholder: '写一段清楚、自然的话。',
+    messagePlaceholder: '',
     attachmentLink: '附件链接',
-    optional: '可选',
+    optional: '',
     notSet: '未填写',
     none: '无',
     clear: '清空',
@@ -191,15 +191,15 @@ const copy = {
     preparedFor: (to) => `已准备发送给 ${to}`,
     sendNeedsAttention: '发送需要处理',
     assistantTitle: '助手',
-    assistantDescription: '在写消息时帮你起草、润色和整理',
+    assistantDescription: '',
     assistantName: '助手名称',
     thread: '会话',
     keepsContext: '保留上下文',
     prompt: '提问',
     new: '新会话',
     send: '发送',
-    promptHint: '点新会话可重置',
-    promptPlaceholder: '让助手帮你改写、想回复，或快速总结。',
+    promptHint: '',
+    promptPlaceholder: '',
     noChat: '还没有本地对话。',
     messageRequired: '请输入内容',
     ready: '就绪',
@@ -207,7 +207,7 @@ const copy = {
     defaultAssistant: '默认助手',
     you: '你',
     assistantNeedsAttention: '助手需要处理',
-    preferencesDescription: '需要更细控制时，可以在这里调整工作台',
+    preferencesDescription: '',
     notLoaded: '未加载',
     edited: '已编辑',
     loaded: '已加载',
@@ -245,12 +245,12 @@ function readPrefs() {
     const raw = window.localStorage.getItem(UI_PREFS_KEY);
     const prefs = raw ? JSON.parse(raw) : {};
     return {
-      language: prefs.language === 'zh' ? 'zh' : 'en',
+      language: prefs.language === 'en' ? 'en' : 'zh',
       mode: prefs.mode === 'dark' ? 'dark' : 'light',
       theme: themes.some((theme) => theme.id === prefs.theme) ? prefs.theme : 'calm',
     };
   } catch {
-    return { language: 'en', mode: 'light', theme: 'calm' };
+    return { language: 'zh', mode: 'light', theme: 'calm' };
   }
 }
 
@@ -536,7 +536,7 @@ function App() {
             </div>
             <div>
               <h1>Welinker</h1>
-              <p className="brand-subtitle">{t.brandSubtitle}</p>
+              {t.brandSubtitle ? <p className="brand-subtitle">{t.brandSubtitle}</p> : null}
             </div>
           </div>
           <div className="toolbar" aria-live="polite">
@@ -569,11 +569,9 @@ function App() {
               <div className="button-toggle" aria-label={`${t.light} / ${t.dark}`}>
                 <button type="button" aria-pressed={uiPrefs.mode === 'light'} onClick={() => updatePrefs({ mode: 'light' })}>
                   <Sun size={14} aria-hidden="true" />
-                  <span>{t.light}</span>
                 </button>
                 <button type="button" aria-pressed={uiPrefs.mode === 'dark'} onClick={() => updatePrefs({ mode: 'dark' })}>
                   <Moon size={14} aria-hidden="true" />
-                  <span>{t.dark}</span>
                 </button>
               </div>
             </div>
@@ -590,13 +588,9 @@ function App() {
 
         <section className="workspace-hero" aria-label="Workspace overview">
           <div>
-            <p className="eyebrow">{t.today}</p>
+            {t.today ? <p className="eyebrow">{t.today}</p> : null}
             <h2>{t.heroTitle}</h2>
-            <p className="hero-copy">{t.heroCopy}</p>
-          </div>
-          <div className="hero-stats" aria-label="Workspace status">
-            <div><span>{t.readyIdentities}</span><strong>{accounts.length}</strong></div>
-            <div><span>{t.currentIdentity}</span><strong>{shortValue(selectedLabel)}</strong></div>
+            {t.heroCopy ? <p className="hero-copy">{t.heroCopy}</p> : null}
           </div>
         </section>
 
@@ -608,7 +602,7 @@ function App() {
                   <Users size={18} aria-hidden="true" />
                   <div>
                     <h2 id="accountsTitle">{t.wechatIdentities}</h2>
-                    <p className="panel-description">{t.pickIdentity}</p>
+                    {t.pickIdentity ? <p className="panel-description">{t.pickIdentity}</p> : null}
                   </div>
                 </div>
                 <button className="btn" type="button" title={t.refresh} onClick={() => loadStatus().catch((err) => setNotice({ value: err.message || String(err), type: 'error' }))}>
@@ -647,7 +641,7 @@ function App() {
                     <Send size={18} aria-hidden="true" />
                     <div>
                       <h2 id="sendTitle">{t.composeMessage}</h2>
-                      <p className="panel-description">{t.composeDescription}</p>
+                      {t.composeDescription ? <p className="panel-description">{t.composeDescription}</p> : null}
                     </div>
                   </div>
                   <span className="badge primary">{selectedLabel}</span>
@@ -672,11 +666,6 @@ function App() {
                     <Field label={t.attachmentLink} hint={t.optional} htmlFor="mediaUrl">
                       <input className="control" id="mediaUrl" value={form.media_url} autoComplete="off" placeholder="https://example.com/image.png" onChange={(event) => setForm({ ...form, media_url: event.target.value })} />
                     </Field>
-                    <div className="composer-meta" aria-label={t.message}>
-                      <div className="mini-stat"><span>{t.from}</span><strong>{shortValue(selectedLabel)}</strong></div>
-                      <div className="mini-stat"><span>{t.to}</span><strong>{shortValue(form.to.trim(), t.notSet)}</strong></div>
-                      <div className="mini-stat"><span>{t.attachmentLink}</span><strong>{shortValue(form.media_url.trim(), t.none)}</strong></div>
-                    </div>
                     <div className="actions">
                       <Notice value={notice.value} type={notice.type} />
                       <div className="button-group">
@@ -698,7 +687,6 @@ function App() {
                 </div>
               </section>
 
-              <ActivityPanel items={activity} t={t} />
             </div>
           </div>
         ) : null}
@@ -711,7 +699,7 @@ function App() {
                   <MessageCircle size={18} aria-hidden="true" />
                   <div>
                     <h2 id="chatTitle">{t.assistantTitle}</h2>
-                    <p className="panel-description">{t.assistantDescription}</p>
+                    {t.assistantDescription ? <p className="panel-description">{t.assistantDescription}</p> : null}
                   </div>
                 </div>
                 <span className="badge neutral">{shortValue(chat.conversation_id.trim(), 'web')}</span>
@@ -772,7 +760,7 @@ function App() {
                   <Settings size={18} aria-hidden="true" />
                   <div>
                     <h2 id="configTitle">{t.preferences}</h2>
-                    <p className="panel-description">{t.preferencesDescription}</p>
+                    {t.preferencesDescription ? <p className="panel-description">{t.preferencesDescription}</p> : null}
                   </div>
                 </div>
                 <span className={configNotice.type === 'ok' ? 'badge primary' : 'badge neutral'}>{configNotice.value || (configLoaded ? t.edited : t.notLoaded)}</span>

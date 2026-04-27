@@ -427,17 +427,17 @@ main.shell {
 
 .workspace-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  grid-template-columns: 1fr;
   gap: 22px;
   align-items: end;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 30px;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(236, 254, 255, 0.82)),
     linear-gradient(135deg, rgba(20, 184, 166, 0.08), rgba(249, 115, 22, 0.1));
   box-shadow: var(--shadow);
-  padding: 28px;
+  padding: 22px 24px;
   overflow: hidden;
 }
 
@@ -445,7 +445,7 @@ main.shell {
   max-width: 620px;
   margin-top: 5px;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(34px, 5vw, 62px);
+  font-size: clamp(30px, 4vw, 46px);
   line-height: 0.98;
   font-weight: 700;
   overflow-wrap: anywhere;
