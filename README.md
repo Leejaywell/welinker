@@ -82,3 +82,70 @@ API endpoints:
 
 Config changes saved through the WebUI are written to disk immediately. Restart
 Welinker to apply runtime changes such as default agent, aliases, or API address.
+
+## Implementation Notes
+
+### HTTP request handling
+
+The built-in API server is intentionally small and dependency-light, but it still
+handles request bodies by `Content-Length` instead of assuming a single TCP read
+contains the full request. This matters for WebUI config saves and local chat
+messages because browsers may split large JSON bodies across packets.
+
+- Request headers are read until `\r\n\r\n`.
+- `Content-Length` is parsed case-insensitively.
+- The server reads exactly the declared body length before dispatching.
+- Requests larger than 4 MiB are rejected with `413 Payload Too Large`.
+- Incomplete or invalid bodies are rejected with `400 Bad Request`.
+
+### Local API exposure
+
+`GET /api/config`, `PUT /api/config`, and `POST /api/chat` expose sensitive local
+capabilities: config files may include agent API keys, and chat requests can
+invoke local agents. For that reason, the API server refuses to bind to
+non-loopback addresses by default.
+
+Safe default:
+
+```json
+{
+  "api_addr": "127.0.0.1:18011"
+}
+```
+
+Remote/LAN binding requires an explicit opt-in:
+
+```bash
+WELINKER_ALLOW_REMOTE_API=1 cargo run -- start --foreground --api-addr 0.0.0.0:18011
+```
+
+Only use remote binding on a trusted network or behind your own access control.
+
+### Config save semantics
+
+`PUT /api/config` validates and writes the full JSON config to
+`~/.welinker/config.json`, then returns:
+
+```json
+{
+  "reload_required": true
+}
+```
+
+The running process does not hot-reload the saved config. Agent metadata,
+aliases, default agent, save directory, and API address are initialized at
+startup. Restart Welinker after saving config changes that affect runtime
+behavior.
+
+### API server startup failures
+
+The API server runs in its own async task while message monitoring continues.
+If binding fails, for example because the port is already in use, the failure is
+logged as:
+
+```text
+api server stopped error=...
+```
+
+In foreground mode this is written through tracing. In background mode it appears
+in `~/.welinker/welinker.log`.
