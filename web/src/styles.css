@@ -830,8 +830,8 @@ button:focus-visible {
 
 .chat-layout {
   display: grid;
-  grid-template-columns: minmax(0, 940px);
-  justify-content: center;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: stretch;
   align-items: start;
 }
 
