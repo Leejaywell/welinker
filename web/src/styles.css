@@ -703,6 +703,10 @@ textarea.message-control {
   min-height: 188px;
 }
 
+.chat-panel textarea.message-control {
+  min-height: 96px;
+}
+
 .control::placeholder {
   color: #7c9690;
 }
