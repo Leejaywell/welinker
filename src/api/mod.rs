@@ -961,8 +961,15 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
       margin-top: 18px;
     }
 
+    .chat-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 960px);
+      justify-content: center;
+      align-items: start;
+    }
+
     .chat-panel {
-      margin-top: 18px;
+      margin-top: 0;
     }
 
     .chat-log {
@@ -1120,7 +1127,8 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
         grid-template-columns: 1fr;
       }
 
-      .config-layout {
+      .config-layout,
+      .chat-layout {
         grid-template-columns: 1fr;
       }
 
@@ -1188,8 +1196,8 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
           <strong id="accountMetric">0</strong>
         </div>
         <div class="endpoint-pill">
-          <span>POST</span>
-          <code>/api/send</code>
+          <span id="endpointMethod">POST</span>
+          <code id="endpointPath">/api/send</code>
         </div>
       </div>
     </div>
@@ -1197,7 +1205,8 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
 
   <main class="shell">
     <nav class="view-tabs" aria-label="Welinker sections">
-      <button class="tab-button" id="messageTab" type="button" aria-selected="true" data-view-target="messageView">Message</button>
+      <button class="tab-button" id="messageTab" type="button" aria-selected="true" data-view-target="messageView">Send Message</button>
+      <button class="tab-button" id="chatTab" type="button" aria-selected="false" data-view-target="chatView">Local Agent Chat</button>
       <button class="tab-button" id="configTab" type="button" aria-selected="false" data-view-target="configView">Config</button>
     </nav>
 
@@ -1320,70 +1329,6 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
           </div>
         </section>
 
-        <section class="panel chat-panel" aria-labelledby="chatTitle">
-          <div class="panel-head">
-            <div class="panel-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"></path>
-                <path d="M8 9h8"></path>
-                <path d="M8 13h5"></path>
-              </svg>
-              <div>
-                <h2 id="chatTitle">Local Agent Chat</h2>
-                <p class="panel-description">Talk to Welinker without a WeChat login</p>
-              </div>
-            </div>
-            <span class="badge neutral" id="chatSessionBadge">web</span>
-          </div>
-          <div class="panel-body">
-            <form id="chatForm">
-              <div class="form-grid">
-                <div class="field">
-                  <div class="field-row">
-                    <label for="chatAgent">Agent</label>
-                    <span class="hint">Optional</span>
-                  </div>
-                  <input class="control" id="chatAgent" name="agent" autocomplete="off" placeholder="default, hermes, hermes-http, codex" />
-                </div>
-                <div class="field">
-                  <div class="field-row">
-                    <label for="chatConversation">Conversation</label>
-                    <span class="hint">Keeps context</span>
-                  </div>
-                  <input class="control" id="chatConversation" name="conversation_id" autocomplete="off" value="web" />
-                </div>
-              </div>
-              <div class="chat-log" id="chatLog" aria-live="polite"></div>
-              <div class="field">
-                <div class="field-row">
-                  <label for="chatMessage">Message</label>
-                  <span class="hint">Use /new to reset</span>
-                </div>
-                <textarea class="control" id="chatMessage" name="message" placeholder="Ask the configured agent anything."></textarea>
-              </div>
-              <div class="actions">
-                <div id="chatNotice" class="notice" aria-live="polite"></div>
-                <div class="button-group">
-                  <button class="btn" id="newChat" type="button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <path d="M12 5v14"></path>
-                      <path d="M5 12h14"></path>
-                    </svg>
-                    New
-                  </button>
-                  <button class="btn primary" id="chatButton" type="submit">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <path d="m22 2-7 20-4-9-9-4Z"></path>
-                      <path d="M22 2 11 13"></path>
-                    </svg>
-                    Send
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </section>
-
         <section class="panel activity" aria-labelledby="activityTitle">
           <div class="panel-head">
             <div class="panel-title">
@@ -1402,6 +1347,72 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
           </div>
         </section>
       </div>
+    </div>
+
+    <div class="view chat-layout" id="chatView" hidden>
+      <section class="panel feature chat-panel" aria-labelledby="chatTitle">
+        <div class="panel-head">
+          <div class="panel-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"></path>
+              <path d="M8 9h8"></path>
+              <path d="M8 13h5"></path>
+            </svg>
+            <div>
+              <h2 id="chatTitle">Local Agent Chat</h2>
+              <p class="panel-description">Talk to Welinker without a WeChat login</p>
+            </div>
+          </div>
+          <span class="badge neutral" id="chatSessionBadge">web</span>
+        </div>
+        <div class="panel-body">
+          <form id="chatForm">
+            <div class="form-grid">
+              <div class="field">
+                <div class="field-row">
+                  <label for="chatAgent">Agent</label>
+                  <span class="hint">Optional</span>
+                </div>
+                <input class="control" id="chatAgent" name="agent" autocomplete="off" placeholder="default, hermes, hermes-http, codex" />
+              </div>
+              <div class="field">
+                <div class="field-row">
+                  <label for="chatConversation">Conversation</label>
+                  <span class="hint">Keeps context</span>
+                </div>
+                <input class="control" id="chatConversation" name="conversation_id" autocomplete="off" value="web" />
+              </div>
+            </div>
+            <div class="chat-log" id="chatLog" aria-live="polite"></div>
+            <div class="field">
+              <div class="field-row">
+                <label for="chatMessage">Message</label>
+                <span class="hint">Use /new to reset</span>
+              </div>
+              <textarea class="control" id="chatMessage" name="message" placeholder="Ask the configured agent anything."></textarea>
+            </div>
+            <div class="actions">
+              <div id="chatNotice" class="notice" aria-live="polite"></div>
+              <div class="button-group">
+                <button class="btn" id="newChat" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                  </svg>
+                  New
+                </button>
+                <button class="btn primary" id="chatButton" type="submit">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m22 2-7 20-4-9-9-4Z"></path>
+                    <path d="M22 2 11 13"></path>
+                  </svg>
+                  Send
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
     </div>
 
     <div class="view config-layout" id="configView" hidden>
@@ -1507,6 +1518,8 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
     const statusDotEl = document.querySelector('#statusDot');
     const statusEl = document.querySelector('#statusText');
     const accountMetricEl = document.querySelector('#accountMetric');
+    const endpointMethodEl = document.querySelector('#endpointMethod');
+    const endpointPathEl = document.querySelector('#endpointPath');
     const selectedBadgeEl = document.querySelector('#selectedBadge');
     const selectedAccountEl = document.querySelector('#selectedAccount');
     const recipientPreviewEl = document.querySelector('#recipientPreview');
@@ -1576,6 +1589,17 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
     function setStatus(text, type = '') {
       statusEl.textContent = text;
       statusDotEl.className = `dot ${type}`;
+    }
+
+    function updateEndpointForView(viewId) {
+      const endpoints = {
+        messageView: ['POST', '/api/send'],
+        chatView: ['POST', '/api/chat'],
+        configView: ['PUT', '/api/config'],
+      };
+      const [method, path] = endpoints[viewId] || endpoints.messageView;
+      endpointMethodEl.textContent = method;
+      endpointPathEl.textContent = path;
     }
 
     function accountLabel(account) {
@@ -1905,6 +1929,7 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
         document.querySelectorAll('.view').forEach((view) => {
           view.hidden = view.id !== button.dataset.viewTarget;
         });
+        updateEndpointForView(button.dataset.viewTarget);
         if (button.dataset.viewTarget === 'configView' && !configLoaded) {
           loadConfig().catch((err) => {
             setConfigNotice(err.message, 'error');
@@ -2006,6 +2031,7 @@ const WEB_UI_HTML: &str = r#"<!doctype html>
     renderActivity();
     renderEmptyChat();
     updatePreview();
+    updateEndpointForView('messageView');
     load().catch((err) => {
       setStatus('offline', 'error');
       setNotice(err.message, 'error');
