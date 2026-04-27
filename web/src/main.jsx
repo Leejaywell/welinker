@@ -615,14 +615,6 @@ function App() {
           <button className="tab-button" type="button" aria-selected={view === 'config'} onClick={() => setView('config')}>{t.preferences}</button>
         </nav>
 
-        <section className="workspace-hero" aria-label="Workspace overview">
-          <div>
-            {t.today ? <p className="eyebrow">{t.today}</p> : null}
-            <h2>{t.heroTitle}</h2>
-            {t.heroCopy ? <p className="hero-copy">{t.heroCopy}</p> : null}
-          </div>
-        </section>
-
         {view === 'message' ? (
           <div className="view layout">
             <section className="panel" aria-labelledby="accountsTitle">
