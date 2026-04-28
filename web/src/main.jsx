@@ -669,18 +669,9 @@ function App() {
                 </div>
                 <div className="panel-body">
                   <form onSubmit={sendMessage}>
-                    <div className="form-grid">
-                      <Field label={t.from} hint={t.required} htmlFor="accountSelect">
-                        <select className="control" id="accountSelect" value={selected} onChange={(event) => setSelected(event.target.value)}>
-                          {accounts.length ? accounts.map((account) => (
-                            <option key={account.account_id} value={account.account_id}>{accountLabel(account)}</option>
-                          )) : <option value="">{t.noIdentity}</option>}
-                        </select>
-                      </Field>
-                      <Field label={t.to} hint={t.contactHint} htmlFor="to">
-                        <input className="control" id="to" value={form.to} autoComplete="off" placeholder="user_id@im.wechat" required onChange={(event) => setForm({ ...form, to: event.target.value })} />
-                      </Field>
-                    </div>
+                    <Field label={t.to} hint={t.contactHint} htmlFor="to">
+                      <input className="control" id="to" value={form.to} autoComplete="off" placeholder="user_id@im.wechat" required onChange={(event) => setForm({ ...form, to: event.target.value })} />
+                    </Field>
                     <Field label={t.message} hint={`${form.text.length} ${t.characters}`} htmlFor="text">
                       <textarea className="control message-control" id="text" value={form.text} placeholder={t.messagePlaceholder} onChange={(event) => setForm({ ...form, text: event.target.value })} />
                     </Field>
