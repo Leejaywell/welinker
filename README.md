@@ -1,5 +1,7 @@
 # welinker
 
+中文文档: [docs/README.zh-CN.md](docs/README.zh-CN.md)
+
 Rust implementation of a WeChat iLink to AI Agent bridge, based on the architecture in `../weclaw`.
 
 ## Features
