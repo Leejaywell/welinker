@@ -102,7 +102,7 @@ account.
   "api_addr": "127.0.0.1:18011",
   "save_dir": "/Users/me/WeChat",
   "route_tag": "optional-sk-route-tag",
-  "default_agent": "codex",
+  "default_agent": "gemini",
   "agents": {}
 }
 ```

@@ -212,11 +212,11 @@ const AGENT_CANDIDATES: &[AgentCandidate] = &[
 ];
 
 const DEFAULT_ORDER: &[&str] = &[
+    "gemini",
     "claude",
     "codex",
     "cursor",
     "kimi",
-    "gemini",
     "opencode",
     "openclaw",
     "zeroclaw",

@@ -4,6 +4,7 @@ use base64::Engine;
 use rand::RngCore;
 use reqwest::{Client as HttpClient, StatusCode};
 use serde::{de::DeserializeOwned, Serialize};
+use serde_json::Value;
 use std::time::Duration;
 
 const DEFAULT_BASE_URL: &str = "https://ilinkai.weixin.qq.com";
@@ -186,7 +187,66 @@ async fn read_json<T: DeserializeOwned>(resp: reqwest::Response) -> Result<T> {
             String::from_utf8_lossy(&bytes)
         );
     }
-    serde_json::from_slice(&bytes).context("unmarshal response")
+    serde_json::from_slice(&bytes)
+        .with_context(|| format!("unmarshal response: {}", response_summary(&bytes)))
+}
+
+fn response_summary(bytes: &[u8]) -> String {
+    match serde_json::from_slice::<Value>(bytes) {
+        Ok(Value::Object(map)) => {
+            let mut keys = map.keys().take(12).cloned().collect::<Vec<_>>();
+            keys.sort();
+            let mut parts = vec![format!("json object keys={}", keys.join(","))];
+            if let Some(ret) = map.get("ret").or_else(|| map.get("Ret")) {
+                parts.push(format!("ret={ret}"));
+            }
+            if let Some(errcode) = map
+                .get("errcode")
+                .or_else(|| map.get("errCode"))
+                .or_else(|| map.get("ErrCode"))
+            {
+                parts.push(format!("errcode={errcode}"));
+            }
+            if let Some(errmsg) = map
+                .get("errmsg")
+                .or_else(|| map.get("errMsg"))
+                .or_else(|| map.get("ErrMsg"))
+                .and_then(|value| value.as_str())
+            {
+                parts.push(format!("errmsg={}", compact_snippet(errmsg, 160)));
+            }
+            parts.join("; ")
+        }
+        Ok(Value::Array(items)) => format!("json array len={}", items.len()),
+        Ok(value) => format!("json {}", value_type(&value)),
+        Err(_) => format!(
+            "non-json body prefix={}",
+            compact_snippet(&String::from_utf8_lossy(bytes), 160)
+        ),
+    }
+}
+
+fn value_type(value: &Value) -> &'static str {
+    match value {
+        Value::Null => "null",
+        Value::Bool(_) => "bool",
+        Value::Number(_) => "number",
+        Value::String(_) => "string",
+        Value::Array(_) => "array",
+        Value::Object(_) => "object",
+    }
+}
+
+fn compact_snippet(value: &str, max_chars: usize) -> String {
+    let mut out = value
+        .chars()
+        .map(|ch| if ch.is_control() { ' ' } else { ch })
+        .collect::<String>();
+    if out.chars().count() > max_chars {
+        out = out.chars().take(max_chars).collect::<String>();
+        out.push_str("...");
+    }
+    out
 }
 
 fn generate_wechat_uin() -> String {

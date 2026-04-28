@@ -69,16 +69,23 @@ pub struct GetUpdatesRequest {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetUpdatesResponse {
+    #[serde(default, alias = "Ret")]
     pub ret: i32,
-    #[serde(default)]
+    #[serde(default, alias = "ErrCode", alias = "errCode")]
     pub errcode: i32,
-    #[serde(default)]
+    #[serde(default, alias = "ErrMsg", alias = "errMsg")]
     pub errmsg: String,
-    #[serde(default)]
+    #[serde(default, alias = "Msgs", alias = "msgList")]
     pub msgs: Vec<WeixinMessage>,
     #[serde(default)]
+    #[serde(alias = "getUpdatesBuf", alias = "GetUpdatesBuf")]
     pub get_updates_buf: String,
     #[serde(default)]
+    #[serde(
+        alias = "longPollingTimeoutMs",
+        alias = "longpollingTimeoutMs",
+        alias = "LongPollingTimeoutMs"
+    )]
     #[allow(dead_code)]
     pub longpolling_timeout_ms: i32,
 }
@@ -227,8 +234,9 @@ pub struct GetUploadUrlRequest {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetUploadUrlResponse {
+    #[serde(default, alias = "Ret")]
     pub ret: i32,
-    #[serde(default)]
+    #[serde(default, alias = "ErrMsg", alias = "errMsg")]
     pub errmsg: String,
     #[serde(default)]
     pub upload_param: String,
@@ -258,8 +266,9 @@ pub struct SendMsg {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct SendMessageResponse {
+    #[serde(default, alias = "Ret")]
     pub ret: i32,
-    #[serde(default)]
+    #[serde(default, alias = "ErrMsg", alias = "errMsg")]
     pub errmsg: String,
 }
 
@@ -273,8 +282,9 @@ pub struct GetConfigRequest {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetConfigResponse {
+    #[serde(default, alias = "Ret")]
     pub ret: i32,
-    #[serde(default)]
+    #[serde(default, alias = "ErrMsg", alias = "errMsg")]
     pub errmsg: String,
     #[serde(default)]
     pub typing_ticket: String,
@@ -290,7 +300,24 @@ pub struct SendTypingRequest {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct SendTypingResponse {
+    #[serde(default, alias = "Ret")]
     pub ret: i32,
-    #[serde(default)]
+    #[serde(default, alias = "ErrMsg", alias = "errMsg")]
     pub errmsg: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn getupdates_accepts_capitalized_error_fields() {
+        let resp: GetUpdatesResponse =
+            serde_json::from_str(r#"{"Ret":0,"ErrCode":-14,"ErrMsg":"expired","Msgs":[]}"#)
+                .unwrap();
+        assert_eq!(resp.ret, 0);
+        assert_eq!(resp.errcode, -14);
+        assert_eq!(resp.errmsg, "expired");
+        assert!(resp.msgs.is_empty());
+    }
 }
