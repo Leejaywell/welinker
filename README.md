@@ -57,6 +57,18 @@ Homebrew formula install from this repository:
 brew install --HEAD ./Formula/welinker.rb
 ```
 
+## Release
+
+GitHub Actions builds release archives when a version tag is pushed:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release workflow uploads Linux and macOS archives, plus a `SHA256SUMS`
+file, to the GitHub Release created for the tag.
+
 ## Usage
 
 ```bash
