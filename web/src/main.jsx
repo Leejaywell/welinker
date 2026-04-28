@@ -44,6 +44,8 @@ const copy = {
     identitiesAvailable: (count) => `${count} WeChat ${count === 1 ? 'identity' : 'identities'} available`,
     noIdentity: 'No identity',
     unknown: 'unknown',
+    accountId: 'account_id',
+    wechatId: 'WeChat ID',
     userUnknown: 'user unknown',
     defaultHome: 'default home',
     brandSubtitle: '',
@@ -147,6 +149,8 @@ const copy = {
     identitiesAvailable: (count) => `${count} 个身份`,
     noIdentity: '未选择身份',
     unknown: '未知',
+    accountId: 'account_id',
+    wechatId: '微信 ID',
     userUnknown: '用户未知',
     defaultHome: '默认入口',
     brandSubtitle: '',
@@ -306,7 +310,6 @@ function App() {
   const [agentOptions, setAgentOptions] = useState([]);
   const [chatLog, setChatLog] = useState([]);
   const [form, setForm] = useState({
-    to: '',
     text: '',
     media_url: '',
   });
@@ -430,11 +433,16 @@ function App() {
 
   async function sendMessage(event) {
     event.preventDefault();
+    const target = currentAccount?.user_id?.trim() || '';
+    if (!target) {
+      setNotice({ value: t.identityEmpty, type: 'error' });
+      return;
+    }
     setNotice({ value: t.sending, type: 'pending' });
     setIsSending(true);
     const payload = {
       account_id: selected,
-      to: form.to.trim(),
+      to: target,
       text: form.text,
       media_url: form.media_url.trim(),
     };
@@ -636,13 +644,9 @@ function App() {
                   const id = account.account_id;
                   return (
                     <button key={id} type="button" className="account-card" aria-pressed={id === selected} onClick={() => setSelected(id)}>
-                      <div className="account-top">
-                        <div className="account-name">{accountLabel(account)}</div>
-                        <span className={id === selected ? 'badge primary' : 'badge neutral'}>{id === selected ? t.inUse : t.available}</span>
-                      </div>
                       <div className="account-meta">
-                        <span>{account.user_id || t.userUnknown}</span>
-                        <span>{account.base_url || t.defaultHome}</span>
+                        <span>{t.accountId}: {account.account_id || t.unknown}</span>
+                        <span>{t.wechatId}: {account.user_id || t.userUnknown}</span>
                       </div>
                     </button>
                   );
@@ -669,9 +673,6 @@ function App() {
                 </div>
                 <div className="panel-body">
                   <form onSubmit={sendMessage}>
-                    <Field label={t.to} hint={t.contactHint} htmlFor="to">
-                      <input className="control" id="to" value={form.to} autoComplete="off" placeholder="user_id@im.wechat" required onChange={(event) => setForm({ ...form, to: event.target.value })} />
-                    </Field>
                     <Field label={t.message} hint={`${form.text.length} ${t.characters}`} htmlFor="text">
                       <textarea className="control message-control" id="text" value={form.text} placeholder={t.messagePlaceholder} onChange={(event) => setForm({ ...form, text: event.target.value })} />
                     </Field>
@@ -682,7 +683,7 @@ function App() {
                       <Notice value={notice.value} type={notice.type} />
                       <div className="button-group">
                         <button className="btn" type="button" onClick={() => {
-                          setForm({ to: '', text: '', media_url: '' });
+                          setForm({ text: '', media_url: '' });
                           setNotice({ value: '', type: '' });
                           addActivity(t.draftCleared, t.draftClearedDetail);
                         }}>
