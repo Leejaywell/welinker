@@ -236,13 +236,8 @@ async fn run_start(foreground: bool, api_addr: String, web_only: bool) -> Result
 
     let default_name = cfg.read().await.default_agent.clone();
     if !default_name.is_empty() {
-        let ag = cfg.read().await.agents.get(&default_name).cloned();
-        if let Some(agent) =
-            create_agent_by_config(&default_name, ag.context("missing default agent")?).await
-        {
-            handler.set_default_agent(default_name.clone(), agent).await;
-            tracing::info!(agent = default_name, "default agent ready");
-        }
+        handler.set_default_agent_name(default_name.clone()).await;
+        tracing::info!(agent = default_name, "default agent selected");
     }
 
     let cfg_read = cfg.read().await;

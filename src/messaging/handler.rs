@@ -60,9 +60,8 @@ impl Handler {
         })
     }
 
-    pub async fn set_default_agent(&self, name: String, agent: SharedAgent) {
-        *self.default_name.write().await = name.clone();
-        self.agents.write().await.insert(name, agent);
+    pub async fn set_default_agent_name(&self, name: String) {
+        *self.default_name.write().await = name;
     }
 
     pub async fn set_agent_metas(&self, metas: Vec<AgentMeta>) {

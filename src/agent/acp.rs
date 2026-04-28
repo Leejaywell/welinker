@@ -12,6 +12,7 @@ use std::{
         atomic::{AtomicI64, Ordering},
         Arc,
     },
+    time::Duration,
 };
 use tokio::{
     io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
@@ -171,24 +172,29 @@ impl AcpAgent {
 
         self.spawn_read_loop(stdout);
 
-        let init_result = if self.protocol == Protocol::CodexAppServer {
-            let value = self
-                .rpc("initialize", json!({"clientInfo": {"name": "welinker", "version": env!("CARGO_PKG_VERSION")}}))
-                .await?;
-            self.notify("initialized", Value::Null).await?;
-            value
-        } else {
-            self.rpc(
-                "initialize",
-                json!({
-                    "protocolVersion": 1,
-                    "clientCapabilities": {
-                        "fs": { "readTextFile": true, "writeTextFile": true }
-                    }
-                }),
-            )
-            .await?
+        let init = async {
+            if self.protocol == Protocol::CodexAppServer {
+                let value = self
+                    .rpc("initialize", json!({"clientInfo": {"name": "welinker", "version": env!("CARGO_PKG_VERSION")}}))
+                    .await?;
+                self.notify("initialized", Value::Null).await?;
+                Ok(value)
+            } else {
+                self.rpc(
+                    "initialize",
+                    json!({
+                        "protocolVersion": 1,
+                        "clientCapabilities": {
+                            "fs": { "readTextFile": true, "writeTextFile": true }
+                        }
+                    }),
+                )
+                .await
+            }
         };
+        let init_result = tokio::time::timeout(Duration::from_secs(30), init)
+            .await
+            .context("agent initialize timed out")??;
         tracing::info!(pid = ?pid, result = %init_result, "acp initialized");
         Ok(())
     }
